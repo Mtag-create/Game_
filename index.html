@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>模型を作って遊ぶゲーム -Mtag</title>
+</head>
+<body>
+	<div id="set">
+		<button id="editBtn">edit</button>
+		<button id="runBtn">run</button>
+		<button id="loadBtn">load</button>
+	</div>
+	<div id="editor">
+		<div id="editorTool" class="toolPanel">
+	    	<button id="cre">
+				<span class="objectIcon"></span>
+				四角作成
+			</button>
+	    	<button id="fix">
+				<span class="jointIcon fixIcon"></span>
+				固定ネジ
+			</button>
+			<button id="hinge">
+				<span class="jointIcon hingeIcon"></span>
+				回転ネジ
+			</button>
+			<button id="motor">
+				<span class="jointIcon motorIcon"></span>
+				モーター
+			</button>
+			<button id="alldel">
+				リセット
+			</button>
+	    	<button id="sel">
+				メニュー
+			</button>
+		</div>
+		<canvas id="editScene" width="800" height="600">Your browser does not support canvas.</canvas>
+	</div>
+	<div id="run" style="display:none">
+		<div id="runTool" class="toolPanel">
+			<button id="startBtn">
+				<span class="runIcon startIcon"></span>
+				スタート
+			</button>
+	    	<button id="stopBtn">
+				<span class="runIcon stopIcon"></span>
+				ストップ
+			</button>
+			<button id="resetBtn">
+				<span class="runIcon resetIcon"></span>
+				リセット
+			</button>
+		</div>
+		<canvas id="runScene" width="800" height="600">Your browser does not support canvas.</canvas>
+	</div>
+	<div id="saveload" style="display:none">
+		<div id="loadTool" class="toolPanel">
+			<button id="loaderBtn">
+				読み込み
+			</button>
+		</div>
+		<textarea id="saveData"></textarea>
+	</div>
+	<div id="rectSelectMenu">
+	    <div>
+			<input type="text" class="name"></input>
+		</div>
+    	<div class="groupRow">
+    	    <button class="groupBtn" data-group="-1"></button>
+    	    <button class="groupBtn" data-group="-2"></button>
+        	<button class="groupBtn" data-group="-3"></button>
+    	    <button class="groupBtn" data-group="-4"></button>
+	        <button class="groupBtn" data-group="-5"></button>
+        	<button class="groupBtn" data-group="-6"></button>
+    	    <button class="groupBtn" data-group="-7"></button>
+	    </div>
+    	<button id="del">
+        	✕ 削除
+    	</button>
+	</div>
+	<div id="jointSelectMenu" style="display: none;">
+	    <div>
+			<input type="text" class="jointName"></input>
+		</div>
+		<div id="sliders">
+			<div class="sliderBox">
+				<p>回転速度(rad/s)</p>
+				<div class="sliderLine">
+					<input id="speedSlider" type="range">
+					<span id="speedValue"></span>
+				</div>
+			</div>
+
+			<div class="sliderBox">
+				<p>回す力(Nm)</p>
+				<div class="sliderLine">
+					<input id="torqueSlider" type="range">
+					<span id="torqueValue"></span>
+				</div>
+			</div>
+		</div>
+		<div class="typeRow">
+			<button class="jointTypeChanger" data-joint="fix">
+				<span class="jointIcon fixIcon"></span>
+			</button>
+			<button class="jointTypeChanger" data-joint="hinge">
+				<span class="jointIcon hingeIcon"></span>
+			</button>
+			<button class="jointTypeChanger" data-joint="motor">
+				<span class="jointIcon motorIcon"></span>
+			</button>
+		</div>
+    	<button id="jointDel">
+        	✕ 削除
+    	</button>
+	</div>
+	<div id="credit">
+		<p>
+			Inspired by 動く模型<br>
+			Physics powered by Planck.js
+		</p>
+	</div>
+	<link rel="stylesheet" href="Mtag.css">
+	<script src="Mtag.js" defer></script>
+	<script src="planck.js"></script>
+</body>
+</html>

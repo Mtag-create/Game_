@@ -1,0 +1,394 @@
+:root {
+    --bg-main: #333;
+    --bg-panel: #222;
+    --bg-tool: #444;
+    --text: #ddd;
+}
+
+html,
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    font-family: sans-serif;
+    background: var(--bg-main);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+
+/* ---------- layout ---------- */
+
+#editor,
+#run {
+    display: flex;
+    flex-direction: row;
+
+    background: var(--bg-panel);
+    padding: 15px;
+    border-radius: 15px;
+}
+
+#saveload {
+    width: auto;
+    height: auto;
+
+    display: flex;
+    flex-direction: row;
+
+    background: var(--bg-panel);
+    padding: 15px;
+    border-radius: 15px;
+
+    overflow: hidden;
+}
+
+#loadTool {
+    flex: 0 0 120px;
+}
+
+
+/* ---------- tool panel ---------- */
+
+.toolPanel {
+    width: 120px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    padding: 10px;
+    margin-right: 10px;
+
+    background: var(--bg-tool);
+    border-radius: 10px;
+}
+
+.toolPanel button {
+    width: 100%;
+}
+
+
+/* ---------- menu ---------- */
+
+#rectSelectMenu,
+#jointSelectMenu {
+    position: absolute;
+
+    display: none;
+    flex-direction: column;
+
+    background: rgb(54,51,51);
+    border: 1px solid black;
+
+    padding: 8px;
+    gap: 8px;
+}
+
+
+/* ---------- group ---------- */
+
+.groupRow {
+    display: flex;
+    gap: 4px;
+}
+
+.groupBtn {
+    width: 24px;
+    height: 24px;
+
+    border: 1px solid black;
+
+    display: flex;
+}
+
+.groupBtn:nth-child(1) {
+    background: blue;
+}
+
+.groupBtn:nth-child(2) {
+    background: red;
+}
+
+.groupBtn:nth-child(3) {
+    background: green;
+}
+
+.groupBtn:nth-child(4) {
+    background: yellow;
+}
+
+.groupBtn:nth-child(5) {
+    background: purple;
+}
+
+.groupBtn:nth-child(6) {
+    background: orange;
+}
+
+.groupBtn:nth-child(7) {
+    background: cyan;
+}
+
+
+/* ---------- slider ---------- */
+
+#sliders {
+    display: flex;
+    flex-direction: column;
+
+    font-size: 10px;
+    color: var(--text);
+    gap: 2px;
+}
+
+.sliderBox {
+    display: flex;
+    flex-direction: column;
+
+    margin-bottom: 8px;
+
+    padding: 6px;
+
+    background: #333;
+    border-radius: 6px;
+}
+
+.sliderLine {
+    display: flex;
+    align-items: center;
+
+    gap: 8px;
+}
+
+.sliderLine input {
+    flex: 1;
+}
+
+.sliderLine span {
+    width: 40px;
+    text-align: right;
+}
+
+
+/* ---------- canvas ---------- */
+
+canvas {
+    width: min(100%,800px);
+    height: auto;
+
+    touch-action: none;
+}
+
+
+/* ---------- save ---------- */
+
+#saveData {
+    width: 800px;
+    height: 600px;
+
+    resize: none;
+
+    font-family: monospace;
+
+    background: black;
+    color: greenyellow;
+}
+
+
+/* ---------- button ---------- */
+
+button {
+    background: var(--bg-tool);
+    color: white;
+}
+
+
+/* ---------- icons ---------- */
+
+.jointIcon {
+    display: inline-block;
+
+    width: 10px;
+    height: 10px;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    border: 2px solid;
+
+    margin-right: 6px;
+}
+
+.runIcon {
+    display: inline-block;
+
+    width: 10px;
+    height: 10px;
+
+    border: none;
+    background: transparent;
+
+    position: relative;
+
+    margin-right: 6px;
+}
+
+.objectIcon {
+    display: inline-block;
+
+    width: 10px;
+    height: 8px;
+
+    margin-right: 6px;
+
+    background: rgba(0,120,255,0.4);
+    border: 2px solid rgb(0,120,255);
+}
+
+.fixIcon {
+    border-color:red;
+}
+
+.hingeIcon {
+    border-color:blue;
+}
+
+.motorIcon {
+    border-color:green;
+}
+
+
+.startIcon::before {
+    content:"";
+
+    position:absolute;
+
+    top:1px;
+    left:2px;
+
+    width:0;
+    height:0;
+
+    border-top:4px solid transparent;
+    border-bottom:4px solid transparent;
+    border-left:7px solid white;
+}
+
+
+.stopIcon::before,
+.stopIcon::after {
+    content:"";
+
+    position:absolute;
+
+    top:1px;
+
+    width:3px;
+    height:8px;
+
+    background:white;
+}
+
+.stopIcon::before {
+    left:1px;
+}
+
+.stopIcon::after {
+    left:6px;
+}
+
+
+/* ---------- credit ---------- */
+
+#credit {
+    color:var(--text);
+}
+
+
+/* ---------- mobile ---------- */
+
+@media (max-width:600px) {
+
+    html,
+    body {
+        justify-content:flex-start;
+    }
+
+
+    #editor,
+    #run {
+        flex-direction:column;
+    }
+
+
+    .toolPanel {
+        width:100%;
+
+        order:2;
+
+        margin-right:0;
+        margin-top:10px;
+
+        display:grid;
+        grid-template-columns:repeat(3,1fr);
+    }
+
+
+    .toolPanel button {
+        width:auto;
+    }
+
+
+    #editScene,
+    #runScene{
+        order:1;
+    }
+
+
+    #saveload {
+        margin-top:10px;
+
+        width:100%;
+        max-width:100%;
+
+        display:flex;
+        flex-direction:row;
+        align-items:stretch;
+    }
+
+    #loadTool {
+        display:flex;
+        flex-direction:column;
+        width:max-content;
+        flex:0 0 auto;
+        order:1;
+    }
+
+
+    #saveData {
+        width:auto !important;
+        max-width:none !important;
+        flex:1;
+        min-width:0;
+        order:2;
+
+        min-height:300px !important;
+        height:60vh !important;
+    }
+
+
+    #loaderBtn {
+        width:max-content;
+        height:max-content;
+    }
+}
