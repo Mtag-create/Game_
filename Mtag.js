@@ -32,7 +32,8 @@ const DOM = {
 
         jointDelete: document.querySelector('#jointDel'),
 
-        loader: document.querySelector('#loaderBtn')
+        loader: document.querySelector('#loaderBtn'),
+        clipboard: document.querySelector('#clipboard')
     },
 
     menus: {
@@ -979,13 +980,17 @@ function handleLoaderClick(e) {
     }
 }
 
+function handleClipboardClick() {
+    const data = DOM.load.textbox.value;
+    navigator.clipboard.writeText(data);
+}
+
 function saveData() {
     const data = {
         objects: WORLD.objects,
         joints: WORLD.joints
     };
-    DOM.load.textbox.value =
-        JSON.stringify(data, null, 2);
+    DOM.load.textbox.value = JSON.stringify(data, null, 2);
 }
 
 DOM.editScene.addEventListener("pointermove", mouseMove);
@@ -1061,6 +1066,7 @@ DOM.buttons.jointDelete.addEventListener("click", handleJointDeleteClick);
 
 DOM.buttons.load.addEventListener("click", handleLoadClick);
 DOM.buttons.loader.addEventListener("click", handleLoaderClick);
+DOM.buttons.clipboard.addEventListener("click",handleClipboardClick);
 
 function loop() {
     if (STATE.mode === "edit") {
