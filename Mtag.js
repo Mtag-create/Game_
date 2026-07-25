@@ -13,6 +13,8 @@ const DOM = {
     },
 
     buttons: {
+        side: document.querySelector('#sideBtn'),
+
         create: document.querySelector('#cre'),
         fix: document.querySelector('#fix'),
         hinge: document.querySelector('#hinge'),
@@ -167,7 +169,7 @@ const WORLD = {
 
 class Rect {
     static count = 0;
-    constructor(left, top, width, height, data = null) {
+    constructor(left, top, width, height, side, data = null) {
         this.id = crypto.randomUUID();
         this.name = `object${++Rect.count}`;
         this.left = left;
@@ -180,6 +182,7 @@ class Rect {
         this.z = Date.now();
         this.group = -1;
         this.physicsGroup = 1;
+        this.side = side;
         if (data) {
             Object.assign(this, data);
         }
@@ -197,7 +200,8 @@ class Rect {
             angle: this.angle,
             z: this.z,
             group: this.group,
-            physicsGroup: this.physicsGroup
+            physicsGroup: this.physicsGroup,
+            side: this.side
         }
     }
 }
@@ -207,6 +211,7 @@ class RunObject {
         this.rectId = rect.id;
         this.name = rect.name;
         this.group = rect.group;
+        this.side = rect.side;
 
         this.width = rect.width * CONFIG.repaircell;
         this.height = rect.height * CONFIG.repaircell;
@@ -240,7 +245,7 @@ class RunObject {
 
 class Joint {
     static count = 0;
-    constructor(type, aId, bId, x, y, options = {}, data = null) {
+    constructor(type, aId, bId, x, y, side, options = {}, data = null) {
         this.id = crypto.randomUUID();
         this.name = `joint${++Joint.count}`;
         this.type = type;
@@ -248,6 +253,7 @@ class Joint {
         this.bId = bId;
         this.x = x;
         this.y = y;
+        this.side = side;
         this.options = options;
         if (data) {
             Object.assign(this, data);
@@ -262,6 +268,7 @@ class Joint {
             bId: this.bId,
             x: this.x,
             y: this.y,
+            side: this.sede,
             options: this.options
         };
     }
@@ -274,6 +281,7 @@ class RunJoint {
         this.type = joint.type;
         this.bodyA = WORLD.bodyMap[joint.aId];
         this.bodyB = WORLD.bodyMap[joint.bId];
+        this.side = joint.side;
         this.options = joint.options;
 
         const point = editToWorld(joint.x, joint.y);
