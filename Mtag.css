@@ -181,6 +181,16 @@ body {
 
 /* ---------- canvas ---------- */
 
+#canvasWrap {
+    position: relative;
+}
+
+#sideBtn {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+}
+
 canvas {
     width: min(100%,800px);
     height: auto;
