@@ -167,7 +167,6 @@ const WORLD = {
     objects: [],
     runObjects: [],
     joints: [],
-    runJoints: [], // TODO: ここは実際に使われていない可能性が高い
     bodyMap: {},
     mouseBody: null
 }
