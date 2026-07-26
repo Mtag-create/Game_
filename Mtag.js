@@ -167,6 +167,7 @@ const WORLD = {
     objects: [],
     runObjects: [],
     joints: [],
+    runJoints: [],
     bodyMap: {},
     mouseBody: null
 }
