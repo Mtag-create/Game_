@@ -118,6 +118,7 @@ DOM.jointMenus.sliders.values.torqueValue.textContent =DOM.jointMenus.sliders.to
 const STATE = {
     mode: "edit",
     tool: "create",
+    side: "front",
     rawtype: null,
     modeInRun: "pause",
 
@@ -815,6 +816,14 @@ function mouseUp(e) {
     }
 }
 
+function handleSideClick() {
+    if (STATE.side === "front") {
+        STATE.side = "back";
+    } else {
+        STATE.side = "front";
+    }
+}
+
 function handleCreateClick() {
     if (STATE.mode === "edit") {
         STATE.tool = "create";
@@ -966,7 +975,6 @@ function handleLoaderClick(e) {
             );
 
             WORLD.objects.push(rect);
-
         }
 
         for (let j = 0; j < data.joints.length; j++) {
@@ -1011,6 +1019,8 @@ DOM.runScene.addEventListener("pointerup", mouseUp);
 
 DOM.editScene.addEventListener("pointercancel", mouseUp);
 DOM.runScene.addEventListener("pointercancel", mouseUp);
+
+DOM.buttons.side.addEventListener("click", handleSideClick);
 
 DOM.buttons.create.addEventListener("click", handleCreateClick);
 DOM.buttons.fix.addEventListener("click", handleFixClick);
