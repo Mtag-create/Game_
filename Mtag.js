@@ -67,8 +67,12 @@ const CONFIG = {
     cell: 20,
     repaircell: 6,
     SCALE: 50,
-    xoffset: 150,
-    yoffset: 320,
+    frontXOffset: 150,
+    frontYOffset: 320,
+
+    backXOffset: 415,
+    backYOffset: 320,
+
 
     editorSize: {
         width: 800,
@@ -289,7 +293,7 @@ class RunJoint {
         const anchor = planck.Vec2(point.x / CONFIG.SCALE, point.y / CONFIG.SCALE);
         let runJointSpeed;
 
-        if (STATE.side === "front") {
+        if (this.side === "front") {
             runJointSpeed = this.options.speed;
         } else {
             runJointSpeed = -this.options.speed;
@@ -365,14 +369,14 @@ function getPointerPos(e, canvas) {
 function editToWorld(x, y, side = "front") {
     if (side === "front") {
         return {
-            x: x * CONFIG.repaircell + CONFIG.xoffset,
-            y: y * CONFIG.repaircell + CONFIG.yoffset
+            x: x * CONFIG.repaircell + CONFIG.frontXOffset,
+            y: y * CONFIG.repaircell + CONFIG.frontYOffset
         };
     }
 
     return {
-        x: mirrorX(x) * CONFIG.repaircell + CONFIG.xoffset,
-        y: y * CONFIG.repaircell + CONFIG.yoffset
+        x: mirrorX(x) * CONFIG.repaircell + CONFIG.backXOffset,
+        y: y * CONFIG.repaircell + CONFIG.backYOffset
     };
 }
 
@@ -574,14 +578,6 @@ function drawRunObjects() {
         DOM.ctx.runCtx.lineWidth = 4;
         DOM.ctx.runCtx.beginPath();
 
-        if (runObject.side === "back") {
-            const centerX = DOM.runScene.width / 2;
-            DOM.ctx.runCtx.save();
-            DOM.ctx.runCtx.translate(centerX, 0);
-            DOM.ctx.runCtx.scale(-1, 1);
-            DOM.ctx.runCtx.translate(-centerX, 0);
-        }
-
         const first = body.getWorldPoint(vertices[0]);
         DOM.ctx.runCtx.moveTo(first.x * CONFIG.SCALE, first.y * CONFIG.SCALE);
 
@@ -593,10 +589,6 @@ function drawRunObjects() {
         DOM.ctx.runCtx.closePath();
         DOM.ctx.runCtx.fill();
         DOM.ctx.runCtx.stroke();
-
-        if (runObject.side === "back") {
-            DOM.ctx.runCtx.restore();
-        }
     }
 }
 
@@ -607,6 +599,7 @@ function makeJoint() {
         const rect = WORLD.objects[i];
 
         if (
+            rect.side === STATE.side &&
             STATE.mouse.cellX >= rect.left &&
             STATE.mouse.cellX < rect.left + rect.width &&
             STATE.mouse.cellY >= rect.top &&
@@ -692,6 +685,7 @@ function editMode(e) {
             const joint = WORLD.joints[i];
 
             if (
+                joint.side === STATE.side &&
                 Math.floor(joint.x) === STATE.mouse.cellX &&
                 Math.floor(joint.y) === STATE.mouse.cellY
             ) {
@@ -714,6 +708,7 @@ function editMode(e) {
         for (let i = WORLD.objects.length - 1; i >= 0; i--) {
             const rect = WORLD.objects[i];
             if (
+                rect.side === STATE.side &&
                 STATE.mouse.cellX >= rect.left &&
                 STATE.mouse.cellX < rect.left + rect.width &&
                 STATE.mouse.cellY >= rect.top &&
@@ -737,23 +732,34 @@ function editMode(e) {
 }
 
 function getBodyAtMouse(mouseX, mouseY) {
-    const mouse = planck.Vec2(
-        mouseX / CONFIG.SCALE,
-        mouseY / CONFIG.SCALE
-    );
+    const points = [
+        { x: mouseX, y: mouseY },
+        { x: DOM.runScene.width - mouseX, y: mouseY }
+    ];
 
-    let result = null;
-    const aabb = planck.AABB(mouse, mouse);
+    for (const point of points) {
+        const mouse = planck.Vec2(
+            point.x / CONFIG.SCALE,
+            point.y / CONFIG.SCALE
+        );
 
-    physics.world.queryAABB(aabb, fixture => {
-        if (fixture.testPoint(mouse)) {
-            result = fixture.getBody();
-            return false;
+        let result = null;
+        const aabb = planck.AABB(mouse, mouse);
+
+        physics.world.queryAABB(aabb, fixture => {
+            if (fixture.testPoint(mouse)) {
+                result = fixture.getBody();
+                return false;
+            }
+            return true;
+        });
+
+        if (result) {
+            return result;
         }
-        return true;
-    });
+    }
 
-    return result;
+    return null;
 }
 
 function runMode(e) {
