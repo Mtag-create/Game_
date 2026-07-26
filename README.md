@@ -13,7 +13,7 @@
 - PC・スマホ対応
 
 ## Demo
-https://Mtag-create.gthub.io/Game_/
+https://Mtag-create.github.io/Game_/
 
 ## Technology
 - JavaScript
