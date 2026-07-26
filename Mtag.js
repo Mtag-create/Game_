@@ -287,11 +287,12 @@ class RunJoint {
 
         const point = editToWorld(joint.x, joint.y);
         const anchor = planck.Vec2(point.x / CONFIG.SCALE, point.y / CONFIG.SCALE);
+        let runJointSpeed;
 
         if (STATE.side === "front") {
-            const runJointSpeed = this.options.speed;
+            runJointSpeed = this.options.speed;
         } else {
-            const runJointSpeed = -this.options.speed;
+            runJointSpeed = -this.options.speed;
         }
 
         if (this.type === "hinge") {
@@ -300,7 +301,7 @@ class RunJoint {
                     enableLimit: false,
                     enableMotor: false,
                     referenceAngle: this.options.relativeAngle,
-                    motorSpeed: this.options.speed,
+                    motorSpeed: runJointSpeed,
                     maxMotorTorque: this.options.maxTorque
                 },
                 this.bodyA,
@@ -314,7 +315,7 @@ class RunJoint {
                     enableLimit: false,
                     enableMotor: false,
                     referenceAngle: this.options.relativeAngle,
-                    motorSpeed: this.options.speed,
+                    motorSpeed: runJointSpeed,
                     maxMotorTorque: this.options.maxTorque
                 },
                 this.bodyA,
@@ -501,39 +502,18 @@ function drawRects() {
     const sorted = [...WORLD.objects].sort((a, b) => a.z - b.z);
     for (let i = 0; i < sorted.length; i++) {
         const rect = sorted[i];
-        const base = groupColors[rect.group];
-        DOM.ctx.editCtx.fillStyle = base;
-        DOM.ctx.editCtx.lineWidth = 1;
-        DOM.ctx.editCtx.fillRect(rect.left * CONFIG.cell, rect.top * CONFIG.cell, rect.width * CONFIG.cell, rect.height * CONFIG.cell);
-        DOM.ctx.editCtx.strokeStyle = base.replace("0.4", "0.8");
-        DOM.ctx.editCtx.fillStyle = base;
-        DOM.ctx.editCtx.lineWidth = 4;
-        DOM.ctx.editCtx.strokeRect(rect.left * CONFIG.cell, rect.top * CONFIG.cell, rect.width * CONFIG.cell, rect.height * CONFIG.cell);
-    }
-}
-
-function drawJoints() {
-    DOM.ctx.editCtx.lineWidth = 2;
-    for (let i = 0; i < WORLD.joints.length; i++) {
-        if (WORLD.joints[i].type === "fix") {
-            DOM.ctx.editCtx.strokeStyle = 'red';
-        } else if (WORLD.joints[i].type === "hinge") {
-            DOM.ctx.editCtx.strokeStyle = 'blue';
-        } else if (WORLD.joints[i].type === "motor") {
-            DOM.ctx.editCtx.strokeStyle = 'green';
+        if (rect.side === STATE.side) {
+            const base = groupColors[rect.group];
+            DOM.ctx.editCtx.fillStyle = base;
+            DOM.ctx.editCtx.lineWidth = 1;
+            DOM.ctx.editCtx.fillRect(rect.left * CONFIG.cell, rect.top * CONFIG.cell, rect.width * CONFIG.cell, rect.height * CONFIG.cell);
+            DOM.ctx.editCtx.strokeStyle = base.replace("0.4", "0.8");
+            DOM.ctx.editCtx.fillStyle = base;
+            DOM.ctx.editCtx.lineWidth = 4;
+            DOM.ctx.editCtx.strokeRect(rect.left * CONFIG.cell, rect.top * CONFIG.cell, rect.width * CONFIG.cell, rect.height * CONFIG.cell);
         }
-        DOM.ctx.editCtx.beginPath();
-        DOM.ctx.editCtx.arc(
-            WORLD.joints[i].x * CONFIG.cell,
-            WORLD.joints[i].y * CONFIG.cell,
-            5,
-            0,
-            Math.PI * 2
-        );
-        DOM.ctx.editCtx.stroke();
     }
 }
-
 function drawRunObjects() {
     for (let i = 0; i < WORLD.runObjects.length; i++) {
         const body = WORLD.runObjects[i].body;
@@ -617,6 +597,7 @@ function makeJoint() {
                 rectB.id,
                 STATE.mouse.cellX + 0.5,
                 STATE.mouse.cellY + 0.5,
+                STATE.side,
                 options,
             )
         );
@@ -807,7 +788,7 @@ function mouseUp(e) {
             STATE.mouse.endY = Math.floor(pos.y / CONFIG.cell);
 
             const rect = makeBlock();
-            WORLD.objects.push(new Rect(rect.left, rect.top, rect.width, rect.height));
+            WORLD.objects.push(new Rect(rect.left, rect.top, rect.width, rect.height, STATE.side));
 
             STATE.mouse.startX = null;
             STATE.mouse.startY = null;
@@ -979,6 +960,7 @@ function handleLoaderClick(e) {
                 obj.top,
                 obj.width,
                 obj.height,
+                obj.side,
                 obj
             );
 
@@ -993,6 +975,7 @@ function handleLoaderClick(e) {
                 joi.bId,
                 joi.x,
                 joi.y,
+                joi.side,
                 joi.options,
                 joi
             );
