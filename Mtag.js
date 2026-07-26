@@ -245,7 +245,7 @@ class RunObject {
 }
 
 class Joint {
-    static count = 0;
+    static count = 0
     constructor(type, aId, bId, x, y, side, options = {}, data = null) {
         this.id = crypto.randomUUID();
         this.name = `joint${++Joint.count}`;
@@ -269,7 +269,7 @@ class Joint {
             bId: this.bId,
             x: this.x,
             y: this.y,
-            side: this.sede,
+            side: this.side,
             options: this.options
         };
     }
@@ -362,10 +362,28 @@ function getPointerPos(e, canvas) {
     };
 }
 
-function editToWorld(x, y) {
+function editToWorld(x,y) {
+    if (STATE.side === "front") {
+        return {
+            x:x * CONFIG.repaircell + CONFIG.xoffset,
+            y:y * CONFIG.repaircell + CONFIG.yoffset
+        };
+    } else {
+        return {
+            x:mirrorX(x) * CONFIG.repaircell + CONFIG.xoffset,
+            y:y * CONFIG.repaircell + CONFIG.yoffset
+        };
+    }
+}
+
+function mirrorX(x) {
+    return CONFIG.cols - 1 - x;
+}
+
+function getEditCell(x, y) {
     return {
-        x: x * CONFIG.repaircell + CONFIG.xoffset,
-        y: y * CONFIG.repaircell + CONFIG.yoffset,
+        cellX: Math.floor(x / CONFIG.cell),
+        cellY: Math.floor(y / CONFIG.cell)
     };
 }
 
@@ -514,6 +532,33 @@ function drawRects() {
         }
     }
 }
+
+
+function drawJoints() {
+    DOM.ctx.editCtx.lineWidth = 2;
+    for (let i = 0; i < WORLD.joints.length; i++) {
+        const joint = WORLD.joints[i];
+        if (joint.side === STATE.side) {
+            if (joint.type === "fix") {
+                DOM.ctx.editCtx.strokeStyle = 'red';
+            } else if (joint.type === "hinge") {
+                DOM.ctx.editCtx.strokeStyle = 'blue';
+            } else if (joint.type === "motor") {
+                DOM.ctx.editCtx.strokeStyle = 'green';
+            }
+            DOM.ctx.editCtx.beginPath();
+            DOM.ctx.editCtx.arc(
+                joint.x * CONFIG.cell,
+                joint.y * CONFIG.cell,
+                5,
+                0,
+                Math.PI * 2
+            );
+            DOM.ctx.editCtx.stroke();
+        }
+    }
+}
+
 function drawRunObjects() {
     for (let i = 0; i < WORLD.runObjects.length; i++) {
         const body = WORLD.runObjects[i].body;
@@ -528,6 +573,14 @@ function drawRunObjects() {
         DOM.ctx.runCtx.lineWidth = 4;
         DOM.ctx.runCtx.beginPath();
 
+        if (STATE.side === "back") {
+            const centerX = DOM.runScene.width / 2;
+            DOM.ctx.runCtx.save();
+            DOM.ctx.runCtx.translate(centerX, 0);
+            DOM.ctx.runCtx.scale(-1, 1);
+            DOM.ctx.runCtx.translate(-centerX, 0);
+        }
+
         const first = body.getWorldPoint(vertices[0]);
         DOM.ctx.runCtx.moveTo(first.x * CONFIG.SCALE, first.y * CONFIG.SCALE);
 
@@ -539,6 +592,10 @@ function drawRunObjects() {
         DOM.ctx.runCtx.closePath();
         DOM.ctx.runCtx.fill();
         DOM.ctx.runCtx.stroke();
+
+        if (STATE.side === "back") {
+            DOM.ctx.runCtx.restore();
+        }
     }
 }
 
@@ -607,15 +664,18 @@ function makeJoint() {
 }
 
 function changeJointType(joint, newType, oldOptions) {
+    if (!joint) return;
     joint.type = newType;
     joint.options = oldOptions;
 }
 
 function changeJointSpeed(joint, speed) {
+    if (!joint) return;
     joint.options.speed = speed;
 }
 
 function changeJointTorque(joint, torque) {
+    if (!joint) return;
     joint.options.maxTorque = torque;
 }
 
@@ -744,8 +804,9 @@ function runMode(e) {
 function mouseMove(e) {
     if (STATE.mode === "edit") {
         const pos = getPointerPos(e, DOM.editScene);
-        STATE.mouse.cellX = Math.floor(pos.x / CONFIG.cell);
-        STATE.mouse.cellY = Math.floor(pos.y / CONFIG.cell);
+        const cell = getEditCell(pos.x, pos.y);
+        STATE.mouse.cellX = cell.cellX;
+        STATE.mouse.cellY = cell.cellY;
         STATE.mouse.endX = STATE.mouse.cellX;
         STATE.mouse.endY = STATE.mouse.cellY;
     } else if (STATE.mode === "run") {
@@ -760,12 +821,13 @@ function mouseDown(e) {
     STATE.mouse.isDown = true;
     if (STATE.mode === "edit") {
         const pos = getPointerPos(e, DOM.editScene);
-        STATE.mouse.cellX = Math.floor(pos.x / CONFIG.cell);
-        STATE.mouse.cellY = Math.floor(pos.y / CONFIG.cell);
+        const cell = getEditCell(pos.x, pos.y);
+        STATE.mouse.cellX = cell.cellX;
+        STATE.mouse.cellY = cell.cellY;
         editMode(e);
         if (STATE.tool === "create") {
-            STATE.mouse.startX = Math.floor(pos.x / CONFIG.cell);
-            STATE.mouse.startY = Math.floor(pos.y / CONFIG.cell);
+            STATE.mouse.startX = cell.cellX;
+            STATE.mouse.startY = cell.cellY;
         }
     } else if (STATE.mode === "run") {
         const pos = getPointerPos(e, DOM.runScene);
@@ -782,10 +844,11 @@ function mouseUp(e) {
     if (STATE.mode === "edit") {
         if (STATE.tool === "create") {
             const pos = getPointerPos(e, DOM.editScene);
-            STATE.mouse.cellX = Math.floor(pos.x / CONFIG.cell);
-            STATE.mouse.cellY = Math.floor(pos.y / CONFIG.cell);
-            STATE.mouse.endX = Math.floor(pos.x / CONFIG.cell);
-            STATE.mouse.endY = Math.floor(pos.y / CONFIG.cell);
+            const cell = getEditCell(pos.x, pos.y);
+            STATE.mouse.cellX = cell.cellX;
+            STATE.mouse.cellY = cell.cellY;
+            STATE.mouse.endX = cell.cellX;
+            STATE.mouse.endY = cell.cellY;
 
             const rect = makeBlock();
             WORLD.objects.push(new Rect(rect.left, rect.top, rect.width, rect.height, STATE.side));
@@ -906,7 +969,6 @@ function handleStopClick() {
 function handleResetClick() {
     if (STATE.mode === "run") {
         STATE.modeInRun = "pause";
-        resetWorld();
         resetRunObjects();
         STATE.modeInRun = "run";
     }
