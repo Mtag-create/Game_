@@ -8,15 +8,12 @@
 - ヒンジジョイント
 - モーター
 - 物理シミュレーション
+- 2D
 - JSON保存/読込
 - PC・スマホ対応
 
 ## Demo
-(GitHub PagesのURL)
-
-## How to Play
-1. ...
-2. ...
+https://Mtag-create.gthub.io/Game_/
 
 ## Technology
 - JavaScript
