@@ -8,162 +8,164 @@
 	<meta name="description" content="ブラウザで動く模型を作成できる物理シミュレーションエディタ。パーツ配置、関節、モーターを組み合わせて模型を動かせます。">
 </head>
 <body>
-	<div id="set">
-		<button id="editBtn">edit</button>
-		<button id="runBtn">run</button>
-		<button id="loadBtn">load</button>
-	</div>
-	<div id="editor">
-		<div id="editorTool" class="toolPanel">
-	    	<button id="cre">
-				<span class="objectIcon"></span>
-				四角作成
-			</button>
-	    	<button id="fix">
-				<span class="jointIcon fixIcon"></span>
-				固定ネジ
-			</button>
-			<button id="hinge">
-				<span class="jointIcon hingeIcon"></span>
-				回転ネジ
-			</button>
-			<button id="motor">
-				<span class="jointIcon motorIcon"></span>
-				モーター
-			</button>
-			<button id="alldel">
-				リセット
-			</button>
-	    	<button id="sel">
-				メニュー
-			</button>
+	<main>
+		<div id="set">
+			<button id="editBtn">edit</button>
+			<button id="runBtn">run</button>
+			<button id="loadBtn">load</button>
 		</div>
-		<div id="canvasWrap">
-			<canvas id="editScene" width="800" height="600">Your browser does not support canvas.</canvas>
-			<button id="sideBtn">表</button>
-		</div>
-	</div>
-	<div id="run" style="display:none">
-		<div id="runTool" class="toolPanel">
-			<button id="startBtn">
-				<span class="runIcon startIcon"></span>
-				スタート
-			</button>
-	    	<button id="stopBtn">
-				<span class="runIcon stopIcon"></span>
-				ストップ
-			</button>
-			<button id="resetBtn">
-				<span class="runIcon resetIcon"></span>
-				リセット
-			</button>
-		</div>
-		<canvas id="runScene" width="800" height="600">Your browser does not support canvas.</canvas>
-	</div>
-	<div id="saveload" style="display:none">
-		<div id="loadTool" class="toolPanel">
-			<button id="loaderBtn">
-				読み込み
-			</button>
-			<button id="clipboard">
-				コピー
-			</button>
-		</div>
-		<textarea id="saveData"></textarea>
-	</div>
-	<div id="rectSelectMenu">
-	    <div>
-			<input type="text" class="name" id="objectName"></input>
-		</div>
-    	<div class="groupRow">
-    	    <button class="groupBtn" data-group="-1"></button>
-    	    <button class="groupBtn" data-group="-2"></button>
-        	<button class="groupBtn" data-group="-3"></button>
-    	    <button class="groupBtn" data-group="-4"></button>
-	        <button class="groupBtn" data-group="-5"></button>
-        	<button class="groupBtn" data-group="-6"></button>
-    	    <button class="groupBtn" data-group="-7"></button>
-	    </div>
-    	<button id="del">
-        	✕ 削除
-    	</button>
-	</div>
-	<div id="jointSelectMenu" style="display: none;">
-	    <div>
-			<input type="text" class="jointName" id="jointName"></input>
-		</div>
-		<div id="sliders">
-			<div class="sliderBox">
-				<p>回転速度(rad/s)</p>
-				<div class="sliderLine">
-					<input id="speedSlider" type="range">
-					<span id="speedValue"></span>
-				</div>
+		<div id="editor">
+			<div id="editorTool" class="toolPanel">
+				<button id="cre">
+					<span class="objectIcon"></span>
+					四角作成
+				</button>
+				<button id="fix">
+					<span class="jointIcon fixIcon"></span>
+					固定ネジ
+				</button>
+				<button id="hinge">
+					<span class="jointIcon hingeIcon"></span>
+					回転ネジ
+				</button>
+				<button id="motor">
+					<span class="jointIcon motorIcon"></span>
+					モーター
+				</button>
+				<button id="alldel">
+					リセット
+				</button>
+				<button id="sel">
+					メニュー
+				</button>
 			</div>
-
-			<div class="sliderBox">
-				<p>回す力(Nm)</p>
-				<div class="sliderLine">
-					<input id="torqueSlider" type="range">
-					<span id="torqueValue"></span>
-				</div>
+			<div id="canvasWrap">
+				<canvas id="editScene" width="800" height="600">Your browser does not support canvas.</canvas>
+				<button id="sideBtn">表</button>
 			</div>
 		</div>
-		<div class="typeRow">
-			<button class="jointTypeChanger" data-joint="fix">
-				<span class="jointIcon fixIcon"></span>
-			</button>
-			<button class="jointTypeChanger" data-joint="hinge">
-				<span class="jointIcon hingeIcon"></span>
-			</button>
-			<button class="jointTypeChanger" data-joint="motor">
-				<span class="jointIcon motorIcon"></span>
+		<div id="run" style="display:none">
+			<div id="runTool" class="toolPanel">
+				<button id="startBtn">
+					<span class="runIcon startIcon"></span>
+					スタート
+				</button>
+				<button id="stopBtn">
+					<span class="runIcon stopIcon"></span>
+					ストップ
+				</button>
+				<button id="resetBtn">
+					<span class="runIcon resetIcon"></span>
+					リセット
+				</button>
+			</div>
+			<canvas id="runScene" width="800" height="600">Your browser does not support canvas.</canvas>
+		</div>
+		<div id="saveload" style="display:none">
+			<div id="loadTool" class="toolPanel">
+				<button id="loaderBtn">
+					読み込み
+				</button>
+				<button id="clipboard">
+					コピー
+				</button>
+			</div>
+			<textarea id="saveData"></textarea>
+		</div>
+		<div id="rectSelectMenu">
+			<div>
+				<input type="text" class="name" id="objectName"></input>
+			</div>
+			<div class="groupRow">
+				<button class="groupBtn" data-group="-1"></button>
+				<button class="groupBtn" data-group="-2"></button>
+				<button class="groupBtn" data-group="-3"></button>
+				<button class="groupBtn" data-group="-4"></button>
+				<button class="groupBtn" data-group="-5"></button>
+				<button class="groupBtn" data-group="-6"></button>
+				<button class="groupBtn" data-group="-7"></button>
+			</div>
+			<button id="del">
+				✕ 削除
 			</button>
 		</div>
-    	<button id="jointDel">
-        	✕ 削除
-    	</button>
-	</div>
-	<details id="howto">
-		<summary>How to use</summary>
+		<div id="jointSelectMenu" style="display: none;">
+			<div>
+				<input type="text" class="jointName" id="jointName"></input>
+			</div>
+			<div id="sliders">
+				<div class="sliderBox">
+					<p>回転速度(rad/s)</p>
+					<div class="sliderLine">
+						<input id="speedSlider" type="range">
+						<span id="speedValue"></span>
+					</div>
+				</div>
 
-		<h3>概要</h3>
-		<p>
-			Mtagは、四角形パーツを組み合わせて模型を作り、
-			物理演算によって動かすブラウザゲームです。
-		</p>
+				<div class="sliderBox">
+					<p>回す力(Nm)</p>
+					<div class="sliderLine">
+						<input id="torqueSlider" type="range">
+						<span id="torqueValue"></span>
+					</div>
+				</div>
+			</div>
+			<div class="typeRow">
+				<button class="jointTypeChanger" data-joint="fix">
+					<span class="jointIcon fixIcon"></span>
+				</button>
+				<button class="jointTypeChanger" data-joint="hinge">
+					<span class="jointIcon hingeIcon"></span>
+				</button>
+				<button class="jointTypeChanger" data-joint="motor">
+					<span class="jointIcon motorIcon"></span>
+				</button>
+			</div>
+			<button id="jointDel">
+				✕ 削除
+			</button>
+		</div>
+		<details id="howto">
+			<summary>How to use</summary>
 
-		<h3>パーツ作成</h3>
-		<p>
-			「四角作成」を選択してキャンバス上をドラッグすると、
-			模型のパーツを作成できます。
-		</p>
+			<h3>概要</h3>
+			<p>
+				Mtagは、四角形パーツを組み合わせて模型を作り、
+				物理演算によって動かすブラウザゲームです。
+			</p>
 
-		<h3>接続</h3>
-		<p>
-			固定ネジはパーツ同士を固定します。
-			回転ネジは回転する関節を作ります。
-			モーターを取り付けることでパーツを動かせます。
-		</p>
+			<h3>パーツ作成</h3>
+			<p>
+				「四角作成」を選択してキャンバス上をドラッグすると、
+				模型のパーツを作成できます。
+			</p>
 
-		<h3>シミュレーション</h3>
-		<p>
-			run画面では作成した模型を物理演算で動かせます。
-			想定通りに動くとは限らない、予想外の動きも楽しめます。
-		</p>
+			<h3>接続</h3>
+			<p>
+				固定ネジはパーツ同士を固定します。
+				回転ネジは回転する関節を作ります。
+				モーターを取り付けることでパーツを動かせます。
+			</p>
 
-		<h3>保存</h3>
-		<p>
-			loadから模型データを保存・読み込みできます。
-		</p>
+			<h3>シミュレーション</h3>
+			<p>
+				run画面では作成した模型を物理演算で動かせます。
+				想定通りに動くとは限らない、予想外の動きも楽しめます。
+			</p>
 
-	</details>
-	<div id="credit">
-		<p>
-			Inspired by 動く模型<br>
-			Physics powered by Planck.js
-		</p>
-	</div>
+			<h3>保存</h3>
+			<p>
+				loadから模型データを保存・読み込みできます。
+			</p>
+
+		</details>
+		<div id="credit">
+			<p>
+				Inspired by 動く模型<br>
+				Physics powered by Planck.js
+			</p>
+		</div>
+	</main>
 	<link rel="stylesheet" href="Mtag.css">
 	<script src="Mtag.js" defer></script>
 	<script src="planck.js"></script>
