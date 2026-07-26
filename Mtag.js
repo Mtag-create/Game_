@@ -132,6 +132,8 @@ const STATE = {
 
     mouse: {
         isDown: false,
+        x:null,
+        y:null,
         cellX: null,
         cellY: null,
         startX: null,
@@ -391,6 +393,26 @@ function getEditCell(x, y) {
     };
 }
 
+function isPointInRect(x, y, rect) {
+
+    const cx = rect.centerX * CONFIG.cell;
+    const cy = rect.centerY * CONFIG.cell;
+
+    const dx = x - cx;
+    const dy = y - cy;
+
+    const cos = Math.cos(-rect.angle);
+    const sin = Math.sin(-rect.angle);
+
+    const localX = dx * cos - dy * sin;
+    const localY = dx * sin + dy * cos;
+
+    return (
+        Math.abs(localX) <= rect.width * CONFIG.cell / 2 &&
+        Math.abs(localY) <= rect.height * CONFIG.cell / 2
+    );
+}
+
 function makeBlock() {
     let left = Math.min(STATE.mouse.startX, STATE.mouse.endX);
     let right = Math.max(STATE.mouse.startX, STATE.mouse.endX);
@@ -528,11 +550,55 @@ function drawRects() {
             const base = groupColors[rect.group];
             DOM.ctx.editCtx.fillStyle = base;
             DOM.ctx.editCtx.lineWidth = 1;
-            DOM.ctx.editCtx.fillRect(rect.left * CONFIG.cell, rect.top * CONFIG.cell, rect.width * CONFIG.cell, rect.height * CONFIG.cell);
+            //DOM.ctx.editCtx.fillRect(
+            //    rect.left * CONFIG.cell, 
+            //    rect.top * CONFIG.cell, 
+            //    rect.width * CONFIG.cell, 
+            //    rect.height * CONFIG.cell
+            //);
+            DOM.ctx.editCtx.save();
+
+            DOM.ctx.editCtx.translate(
+                rect.centerX * CONFIG.cell, 
+                rect.centerY * CONFIG.cell
+            );
+            DOM.ctx.editCtx.rotate(rect.angle);
+
+            DOM.ctx.editCtx.fillRect(
+                -rect.width / 2 * CONFIG.cell,
+                -rect.height / 2 * CONFIG.cell,
+                rect.width * CONFIG.cell,
+                rect.height * CONFIG.cell
+            );
+
+            DOM.ctx.editCtx.restore();
+
             DOM.ctx.editCtx.strokeStyle = base.replace("0.4", "0.8");
             DOM.ctx.editCtx.fillStyle = base;
             DOM.ctx.editCtx.lineWidth = 4;
-            DOM.ctx.editCtx.strokeRect(rect.left * CONFIG.cell, rect.top * CONFIG.cell, rect.width * CONFIG.cell, rect.height * CONFIG.cell);
+            //DOM.ctx.editCtx.strokeRect(
+            //    rect.left * CONFIG.cell, 
+            //    rect.top * CONFIG.cell, 
+            //    rect.width * CONFIG.cell, 
+            //    rect.height * CONFIG.cell
+            //);
+            DOM.ctx.editCtx.save();
+
+            DOM.ctx.editCtx.translate(
+                rect.centerX * CONFIG.cell, 
+                rect.centerY * CONFIG.cell
+            );
+            DOM.ctx.editCtx.rotate(rect.angle);
+
+            DOM.ctx.editCtx.strokeRect(
+                -rect.width / 2 * CONFIG.cell,
+                -rect.height / 2 * CONFIG.cell,
+                rect.width * CONFIG.cell,
+                rect.height * CONFIG.cell
+            );
+
+            DOM.ctx.editCtx.restore();
+            
         }
     }
 }
@@ -592,18 +658,16 @@ function drawRunObjects() {
     }
 }
 
-function makeJoint() {
+function makeJoint(e) {
     STATE.selectedRectOfJoint = [];
+    const pos = getPointerPos(e, DOM.editScene);
 
     for (let i = WORLD.objects.length - 1; i >= 0; i--) {
         const rect = WORLD.objects[i];
 
         if (
             rect.side === STATE.side &&
-            STATE.mouse.cellX >= rect.left &&
-            STATE.mouse.cellX < rect.left + rect.width &&
-            STATE.mouse.cellY >= rect.top &&
-            STATE.mouse.cellY < rect.top + rect.height
+            isPointInRect(pos.x, pos.y, rect)
         ) {
             STATE.selectedRectOfJoint.push(rect);
         }
@@ -707,12 +771,10 @@ function editMode(e) {
 
         for (let i = WORLD.objects.length - 1; i >= 0; i--) {
             const rect = WORLD.objects[i];
+            const pos = getPointerPos(e, DOM.editScene);
             if (
                 rect.side === STATE.side &&
-                STATE.mouse.cellX >= rect.left &&
-                STATE.mouse.cellX < rect.left + rect.width &&
-                STATE.mouse.cellY >= rect.top &&
-                STATE.mouse.cellY < rect.top + rect.height
+                isPointInRect(pos.x, pos.y, rect)
             ) {
                 STATE.selectedRect = rect;
 
@@ -726,7 +788,7 @@ function editMode(e) {
             }
         }
     } else if (STATE.tool === "joint") {
-        makeJoint();
+        makeJoint(e);
         DOM.menus.rectSelectMenu.style.display = "none";
     }
 }
@@ -811,6 +873,8 @@ function runMode(e) {
 function mouseMove(e) {
     if (STATE.mode === "edit") {
         const pos = getPointerPos(e, DOM.editScene);
+        STATE.mouse.x = pos.x;
+        STATE.mouse.y = pos.y;
         const cell = getEditCell(pos.x, pos.y);
         STATE.mouse.cellX = cell.cellX;
         STATE.mouse.cellY = cell.cellY;
