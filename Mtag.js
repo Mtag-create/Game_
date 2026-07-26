@@ -819,8 +819,10 @@ function mouseUp(e) {
 function handleSideClick() {
     if (STATE.side === "front") {
         STATE.side = "back";
+        DOM.buttons.side.textContent = "裏";
     } else {
         STATE.side = "front";
+        DOM.buttons.side.textContent = "表";
     }
 }
 
