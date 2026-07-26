@@ -21,5 +21,7 @@ https://Mtag-create.github.io/Game_/
 - Planck.js
 
 ## Credits
+Created by hachirou
+
 Inspired by 動く模型
 Powered by Planck.js
