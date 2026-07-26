@@ -217,7 +217,7 @@ class RunObject {
         this.width = rect.width * CONFIG.repaircell;
         this.height = rect.height * CONFIG.repaircell;
 
-        const point = editToWorld(rect.centerX, rect.centerY);
+        const point = editToWorld(rect.centerX, rect.centerY, rect.side);
 
         this.body = physics.world.createBody({
             type: "dynamic",
@@ -285,7 +285,7 @@ class RunJoint {
         this.side = joint.side;
         this.options = joint.options;
 
-        const point = editToWorld(joint.x, joint.y);
+        const point = editToWorld(joint.x, joint.y, joint.side);
         const anchor = planck.Vec2(point.x / CONFIG.SCALE, point.y / CONFIG.SCALE);
         let runJointSpeed;
 
@@ -362,18 +362,18 @@ function getPointerPos(e, canvas) {
     };
 }
 
-function editToWorld(x,y) {
-    if (STATE.side === "front") {
+function editToWorld(x, y, side = "front") {
+    if (side === "front") {
         return {
-            x:x * CONFIG.repaircell + CONFIG.xoffset,
-            y:y * CONFIG.repaircell + CONFIG.yoffset
-        };
-    } else {
-        return {
-            x:mirrorX(x) * CONFIG.repaircell + CONFIG.xoffset,
-            y:y * CONFIG.repaircell + CONFIG.yoffset
+            x: x * CONFIG.repaircell + CONFIG.xoffset,
+            y: y * CONFIG.repaircell + CONFIG.yoffset
         };
     }
+
+    return {
+        x: mirrorX(x) * CONFIG.repaircell + CONFIG.xoffset,
+        y: y * CONFIG.repaircell + CONFIG.yoffset
+    };
 }
 
 function mirrorX(x) {
@@ -561,8 +561,9 @@ function drawJoints() {
 
 function drawRunObjects() {
     for (let i = 0; i < WORLD.runObjects.length; i++) {
-        const body = WORLD.runObjects[i].body;
-        const base = groupColors[WORLD.runObjects[i].group];
+        const runObject = WORLD.runObjects[i];
+        const body = runObject.body;
+        const base = groupColors[runObject.group];
 
         const fixture = body.getFixtureList();
         const shape = fixture.getShape();
@@ -573,7 +574,7 @@ function drawRunObjects() {
         DOM.ctx.runCtx.lineWidth = 4;
         DOM.ctx.runCtx.beginPath();
 
-        if (STATE.side === "back") {
+        if (runObject.side === "back") {
             const centerX = DOM.runScene.width / 2;
             DOM.ctx.runCtx.save();
             DOM.ctx.runCtx.translate(centerX, 0);
@@ -593,7 +594,7 @@ function drawRunObjects() {
         DOM.ctx.runCtx.fill();
         DOM.ctx.runCtx.stroke();
 
-        if (STATE.side === "back") {
+        if (runObject.side === "back") {
             DOM.ctx.runCtx.restore();
         }
     }
