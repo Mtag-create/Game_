@@ -288,6 +288,12 @@ class RunJoint {
         const point = editToWorld(joint.x, joint.y);
         const anchor = planck.Vec2(point.x / CONFIG.SCALE, point.y / CONFIG.SCALE);
 
+        if (STATE.side === "front") {
+            const runJointSpeed = this.options.speed;
+        } else {
+            const runJointSpeed = -this.options.speed;
+        }
+
         if (this.type === "hinge") {
             const revolute = planck.RevoluteJoint(
                 {
@@ -322,7 +328,7 @@ class RunJoint {
                     enableLimit: false,
                     enableMotor: true,
                     referenceAngle: this.options.relativeAngle,
-                    motorSpeed: this.options.speed,
+                    motorSpeed: runJointSpeed,
                     maxMotorTorque: this.options.maxTorque
                 },
                 this.bodyA,
