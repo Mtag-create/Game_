@@ -1,13 +1,19 @@
 :root {
-    --bg-main: #333;
-    --bg-panel: #222;
-    --bg-tool: #444;
-    --text: #ddd;
+    --bg-main: #22272f;
+    --bg-panel: #1b2028;
+    --bg-tool: #2d3542;
+    --bg-tool-hover: #374455;
+    --text: #e8edf3;
+    --muted: #9aa7b2;
+    --accent: #67e8f9;
+    --accent-2: #a78bfa;
+    --border: rgba(255,255,255,0.12);
+    --shadow: 0 12px 30px rgba(0,0,0,0.28);
 }
 
 html,
 body {
-    height: 100%;
+    min-height: 100%;
     width: 100%;
     margin: 0;
 
@@ -16,8 +22,10 @@ body {
     align-items: center;
     justify-content: center;
 
-    font-family: sans-serif;
-    background: var(--bg-main);
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #1a1f27 0%, #2a3140 100%);
+    color: var(--text);
+    padding: 24px;
 }
 
 * {
@@ -27,6 +35,12 @@ body {
 
 /* ---------- layout ---------- */
 
+#set {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
 #editor,
 #run {
     display: flex;
@@ -34,7 +48,9 @@ body {
 
     background: var(--bg-panel);
     padding: 15px;
-    border-radius: 15px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 }
 
 #saveload {
@@ -46,7 +62,9 @@ body {
 
     background: var(--bg-panel);
     padding: 15px;
-    border-radius: 15px;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
 
     overflow: hidden;
 }
@@ -68,8 +86,10 @@ body {
     padding: 10px;
     margin-right: 10px;
 
-    background: var(--bg-tool);
-    border-radius: 10px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 .toolPanel button {
@@ -86,10 +106,12 @@ body {
     display: none;
     flex-direction: column;
 
-    background: rgb(54,51,51);
-    border: 1px solid black;
+    background: rgba(27, 32, 40, 0.96);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
 
-    padding: 8px;
+    padding: 10px;
     gap: 8px;
 }
 
@@ -189,6 +211,9 @@ body {
     position: absolute;
     right: 10px;
     bottom: 10px;
+    border-radius: 999px;
+    padding: 8px 12px;
+    box-shadow: var(--shadow);
 }
 
 canvas {
@@ -196,6 +221,10 @@ canvas {
     height: auto;
 
     touch-action: none;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #111;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
 
 
@@ -207,10 +236,12 @@ canvas {
 
     resize: none;
 
-    font-family: monospace;
-
-    background: black;
-    color: greenyellow;
+    font-family: Consolas, monospace;
+    background: #0d1117;
+    color: #7efc7e;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px;
 }
 
 
@@ -219,6 +250,30 @@ canvas {
 button {
     background: var(--bg-tool);
     color: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.18);
+}
+
+button:hover {
+    background: var(--bg-tool-hover);
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+input,
+textarea {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    color: var(--text);
+    padding: 6px 8px;
 }
 
 
@@ -321,7 +376,9 @@ button {
 /* ---------- credit ---------- */
 
 #credit {
-    color:var(--text);
+    color: var(--muted);
+    text-align: center;
+    margin-top: 14px;
 }
 
 
