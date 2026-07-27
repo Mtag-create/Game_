@@ -408,6 +408,13 @@ textarea {
         width:100%;
     }
 
+    #canvasWrap {
+        width:100%;
+    }
+
+    canvas {
+        width:100%;
+    }
 
     .toolPanel {
         width:100%;
