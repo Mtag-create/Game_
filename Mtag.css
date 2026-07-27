@@ -397,6 +397,10 @@ textarea {
         align-items:stretch;
     }
 
+    main {
+        width:100%;
+        max-width:100%;
+    }
 
     #editor,
     #run {
