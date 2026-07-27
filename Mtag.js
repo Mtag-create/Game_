@@ -550,12 +550,6 @@ function drawRects() {
             const base = groupColors[rect.group];
             DOM.ctx.editCtx.fillStyle = base;
             DOM.ctx.editCtx.lineWidth = 1;
-            //DOM.ctx.editCtx.fillRect(
-            //    rect.left * CONFIG.cell, 
-            //    rect.top * CONFIG.cell, 
-            //    rect.width * CONFIG.cell, 
-            //    rect.height * CONFIG.cell
-            //);
             DOM.ctx.editCtx.save();
 
             DOM.ctx.editCtx.translate(
@@ -576,12 +570,6 @@ function drawRects() {
             DOM.ctx.editCtx.strokeStyle = base.replace("0.4", "0.8");
             DOM.ctx.editCtx.fillStyle = base;
             DOM.ctx.editCtx.lineWidth = 4;
-            //DOM.ctx.editCtx.strokeRect(
-            //    rect.left * CONFIG.cell, 
-            //    rect.top * CONFIG.cell, 
-            //    rect.width * CONFIG.cell, 
-            //    rect.height * CONFIG.cell
-            //);
             DOM.ctx.editCtx.save();
 
             DOM.ctx.editCtx.translate(
@@ -777,7 +765,7 @@ function editMode(e) {
                 isPointInRect(pos.x, pos.y, rect)
             ) {
                 STATE.selectedRect = rect;
-
+                DOM.jointMenus.jointSelectMenu.style.display = "none";
                 DOM.menus.rectSelectMenu.style.display = "flex";
                 DOM.menus.rectSelectMenu.style.left = e.pageX + "px";
                 DOM.menus.rectSelectMenu.style.top = e.pageY + "px";
@@ -785,11 +773,13 @@ function editMode(e) {
                 break;
             } else {
                 DOM.menus.rectSelectMenu.style.display = "none";
+                DOM.jointMenus.jointSelectMenu.style.display = "none";
             }
         }
     } else if (STATE.tool === "joint") {
         makeJoint(e);
         DOM.menus.rectSelectMenu.style.display = "none";
+        DOM.jointMenus.jointSelectMenu.style.display = "none";
     }
 }
 
@@ -955,6 +945,7 @@ function handleCreateClick() {
 
 function handleSelectClick() {
     if (STATE.mode === "edit") {
+        DOM.jointMenus.jointSelectMenu.style.display = "none";
         DOM.menus.rectSelectMenu.style.display = "none";
         STATE.tool = "select";
     }
@@ -962,6 +953,7 @@ function handleSelectClick() {
 
 function handleFixClick() {
     if (STATE.mode === "edit") {
+        DOM.jointMenus.jointSelectMenu.style.display = "none";
         DOM.menus.rectSelectMenu.style.display = "none";
         STATE.tool = "joint";
         STATE.rawtype = "fix";
@@ -970,6 +962,7 @@ function handleFixClick() {
 
 function handleHingeClick() {
     if (STATE.mode === "edit") {
+        DOM.jointMenus.jointSelectMenu.style.display = "none";
         DOM.menus.rectSelectMenu.style.display = "none";
         STATE.tool = "joint";
         STATE.rawtype = "hinge";
@@ -978,6 +971,7 @@ function handleHingeClick() {
 
 function handleMotorClick() {
     if (STATE.mode === "edit") {
+        DOM.jointMenus.jointSelectMenu.style.display = "none";
         DOM.menus.rectSelectMenu.style.display = "none";
         STATE.tool = "joint";
         STATE.rawtype = "motor";
@@ -986,6 +980,8 @@ function handleMotorClick() {
 
 function handleDeleteOfAllClick() {
     if (STATE.mode === "edit") {
+        DOM.jointMenus.jointSelectMenu.style.display = "none";
+        DOM.menus.rectSelectMenu.style.display = "none";
         WORLD.objects.length = 0;
         WORLD.joints.length = 0;
         STATE.selectedRect = null;
