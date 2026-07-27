@@ -393,7 +393,7 @@ textarea {
     body {
         width:100%;
         justify-content:flex-start;
-        padding:10px;
+        padding:0;
         align-items:stretch;
     }
 
