@@ -398,6 +398,7 @@ textarea {
     #editor,
     #run {
         flex-direction:column;
+        width:100%;
     }
 
 
