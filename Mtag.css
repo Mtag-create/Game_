@@ -391,7 +391,10 @@ textarea {
 
     html,
     body {
+        width:100%;
         justify-content:flex-start;
+        padding:10px;
+        align-items:stretch;
     }
 
 
