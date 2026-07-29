@@ -116,8 +116,8 @@ DOM.jointMenus.sliders.torqueSlider.min = CONFIG.motor.torque.min;
 DOM.jointMenus.sliders.torqueSlider.max = CONFIG.motor.torque.max;
 DOM.jointMenus.sliders.torqueSlider.value = CONFIG.motor.torque.default;
 
-DOM.jointMenus.sliders.values.speedValue.textContent =DOM.jointMenus.sliders.speedSlider.value;
-DOM.jointMenus.sliders.values.torqueValue.textContent =DOM.jointMenus.sliders.torqueSlider.value;
+DOM.jointMenus.sliders.values.speedValue.textContent = DOM.jointMenus.sliders.speedSlider.value;
+DOM.jointMenus.sliders.values.torqueValue.textContent = DOM.jointMenus.sliders.torqueSlider.value;
 
 const STATE = {
     mode: "edit",
@@ -754,6 +754,10 @@ function editMode(e) {
             DOM.jointMenus.jointSelectMenu.style.left = e.pageX + "px";
             DOM.jointMenus.jointSelectMenu.style.top = e.pageY + "px";
             DOM.jointMenus.jointName.value = STATE.selectedJoint.name;
+            DOM.jointMenus.sliders.speedSlider.value = STATE.selectedJoint.options.speed;
+            DOM.jointMenus.sliders.torqueSlider.value = STATE.selectedJoint.options.maxTorque;
+            DOM.jointMenus.sliders.values.speedValue.textContent = DOM.jointMenus.sliders.speedSlider.value;
+            DOM.jointMenus.sliders.values.torqueValue.textContent = DOM.jointMenus.sliders.torqueSlider.value;
             return;
         }
 
