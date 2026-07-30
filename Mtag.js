@@ -973,15 +973,21 @@ function mouseUp(e) {
 function handleSideClick() {
     if (STATE.side === "front") {
         STATE.side = "back";
+        DOM.jointMenus.jointSelectMenu.style.display = "none";
+        DOM.menus.rectSelectMenu.style.display = "none";
         DOM.buttons.side.textContent = "裏";
     } else {
         STATE.side = "front";
+        DOM.jointMenus.jointSelectMenu.style.display = "none";
+        DOM.menus.rectSelectMenu.style.display = "none";
         DOM.buttons.side.textContent = "表";
     }
 }
 
 function handleCreateClick() {
     if (STATE.mode === "edit") {
+        DOM.jointMenus.jointSelectMenu.style.display = "none";
+        DOM.menus.rectSelectMenu.style.display = "none";
         STATE.tool = "create";
     }
 }
