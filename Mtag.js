@@ -41,7 +41,13 @@ const DOM = {
     menus: {
         name: document.querySelector('.name'),
         rectSelectMenu: document.querySelector('#rectSelectMenu'),
-        groupBtns: document.querySelectorAll('.groupBtn')
+        groupBtns: document.querySelectorAll('.groupBtn'),
+        sliders: {
+            angleSlider: document.querySelector('#angleSlider'),
+            values: {
+                angleValue: document.querySelector('#angleValue')
+            }
+        }
     },
 
     jointMenus: {
@@ -83,6 +89,12 @@ const CONFIG = {
         width: 800,
         height: 600
     },
+
+    angle: {
+        min: 0,
+        max: 24,
+        default: 0
+    },
     
     motor: {
         speed: {
@@ -108,6 +120,10 @@ DOM.runScene.height = CONFIG.runnerSize.height;
 CONFIG.cols = Math.floor(DOM.editScene.width / CONFIG.cell);
 CONFIG.rows = Math.floor(DOM.editScene.height / CONFIG.cell);
 
+DOM.menus.sliders.angleSlider.min = CONFIG.angle.min;
+DOM.menus.sliders.angleSlider.max = CONFIG.angle.max;
+DOM.menus.sliders.angleSlider.value = CONFIG.angle.default;
+
 DOM.jointMenus.sliders.speedSlider.min = CONFIG.motor.speed.min;
 DOM.jointMenus.sliders.speedSlider.max = CONFIG.motor.speed.max;
 DOM.jointMenus.sliders.speedSlider.value = CONFIG.motor.speed.default;
@@ -115,6 +131,8 @@ DOM.jointMenus.sliders.speedSlider.value = CONFIG.motor.speed.default;
 DOM.jointMenus.sliders.torqueSlider.min = CONFIG.motor.torque.min;
 DOM.jointMenus.sliders.torqueSlider.max = CONFIG.motor.torque.max;
 DOM.jointMenus.sliders.torqueSlider.value = CONFIG.motor.torque.default;
+
+DOM.menus.sliders.values.angleValue.textContent = DOM.menus.sliders.angleSlider.value;
 
 DOM.jointMenus.sliders.values.speedValue.textContent = DOM.jointMenus.sliders.speedSlider.value;
 DOM.jointMenus.sliders.values.torqueValue.textContent = DOM.jointMenus.sliders.torqueSlider.value;
@@ -204,7 +222,7 @@ class Rect {
             top: this.top,
             width: this.width,
             height: this.height,
-            angle: this.angle,
+            angle: this.angle * 180 / Math.PI,
             z: this.z,
             group: this.group,
             physicsGroup: this.physicsGroup,
@@ -227,7 +245,8 @@ class RunObject {
 
         this.body = physics.world.createBody({
             type: "dynamic",
-            position: planck.Vec2(point.x / CONFIG.SCALE, point.y / CONFIG.SCALE)
+            position: planck.Vec2(point.x / CONFIG.SCALE, point.y / CONFIG.SCALE),
+            angle: rect.angle
         });
 
         const filter = groupFilter[rect.group];
@@ -413,6 +432,14 @@ function isPointInRect(x, y, rect) {
     );
 }
 
+function sliderToAngle(value) {
+    return( value * 15 );
+}
+
+function degreeToRadian(degree) {
+    return degree * Math.PI / 180;
+}
+
 function makeBlock() {
     let left = Math.min(STATE.mouse.startX, STATE.mouse.endX);
     let right = Math.max(STATE.mouse.startX, STATE.mouse.endX);
@@ -586,7 +613,6 @@ function drawRects() {
             );
 
             DOM.ctx.editCtx.restore();
-            
         }
     }
 }
@@ -615,6 +641,17 @@ function drawJoints() {
             DOM.ctx.editCtx.stroke();
         }
     }
+}
+
+function changeObjectAngle(rect, newAngle) {
+    if (!rect) return;
+    for (let i = WORLD.joints.length - 1; i >= 0; i--) {
+        const joint = WORLD.joints[i];
+        if (joint.aId === STATE.selectedRect.id || joint.bId === STATE.selectedRect.id) {
+            WORLD.joints.splice(i, 1);
+        }
+    };
+    rect.angle = newAngle;
 }
 
 function drawRunObjects() {
@@ -774,6 +811,8 @@ function editMode(e) {
                 DOM.menus.rectSelectMenu.style.left = e.pageX + "px";
                 DOM.menus.rectSelectMenu.style.top = e.pageY + "px";
                 DOM.menus.name.value = rect.name;
+                DOM.menus.sliders.angleSlider.value = STATE.selectedRect.angle;
+                DOM.menus.sliders.values.angleValue.textContent = DOM.menus.sliders.angleSlider.value;
                 break;
             } else {
                 DOM.menus.rectSelectMenu.style.display = "none";
@@ -1041,7 +1080,7 @@ function handleResetClick() {
     if (STATE.mode === "run") {
         STATE.modeInRun = "pause";
         resetRunObjects();
-        STATE.modeInRun = "run";
+        STATE.modeInRun = "start";
     }
 }
 
@@ -1084,6 +1123,7 @@ function handleLoaderClick(e) {
 
         for (let i = 0; i < data.objects.length; i++) {
             const obj = data.objects[i];
+            obj.angle = degreeToRadian(obj.angle);
             if (typeof obj.group !== "number" || obj.group > -1 || obj.group < -7) {
                 alert("error: groupを-1に書き換えました")
                 obj.group = -1;
@@ -1180,6 +1220,13 @@ DOM.menus.groupBtns.forEach(btn => {
         STATE.selectedRect.group = Number(btn.dataset.group);
         DOM.menus.rectSelectMenu.style.display = "none";
     });
+});
+
+DOM.menus.sliders.angleSlider.addEventListener("input", e => {
+    const settingAngle = sliderToAngle(Number(e.target.value));
+    DOM.menus.sliders.values.angleValue.textContent = settingAngle;
+    const useAngle = degreeToRadian(settingAngle);
+    changeObjectAngle(STATE.selectedRect, useAngle);
 });
 
 DOM.jointMenus.jointTypeChangers.forEach(btn => {
